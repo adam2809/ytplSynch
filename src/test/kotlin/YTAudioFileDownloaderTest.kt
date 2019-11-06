@@ -12,6 +12,7 @@ class YTAudioFileDownloaderTest{
 
     companion object {
         const val TEST_YT_FILE_DIR = "/home/adam/code/ytplSynch/src/test/resources/TestDestYTFileDownload"
+        const val YT_DL_FILE_NAME_FORMAT = "%s-%s.m4a"
     }
 
 
@@ -26,6 +27,10 @@ class YTAudioFileDownloaderTest{
         return File(TEST_YT_FILE_DIR).walk().toList().drop(1)
     }
 
+    private fun getYTDLFileNameFormatted(ytURL:String,ytId:String):String{
+        return YT_DL_FILE_NAME_FORMAT.format(ytURL,ytId)
+    }
+
     @Test
     fun downloadsValidURL(){
         val validTestURL = "https://www.youtube.com/watch?v=nsufd9Ckiko"
@@ -33,10 +38,13 @@ class YTAudioFileDownloaderTest{
 
         downloader.download()
 
+        val expectedTitle = "Alexander Robotnick - Undicidisco (Justin VanDerVolgen Edit)"
+        val expectedVideoId = "nsufd9Ckiko"
+
         val filesInTestDest = getFilesInTestDir()
         assertEquals(1,filesInTestDest.size)
         println(filesInTestDest[0])
-        assertEquals("Alexander Robotnick - Undicidisco (Justin VanDerVolgen Edit)",filesInTestDest[0])
+        assertEquals(getYTDLFileNameFormatted(expectedTitle,expectedVideoId),filesInTestDest[0])
 
     }
 
