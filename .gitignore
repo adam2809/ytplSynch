@@ -21,5 +21,4 @@ gradle-app.setting
 .gradletasknamecache
 
 *.iws
-*/.idea/workspace.xml 
-*/.idea/tasks.xml
+.idea 
