@@ -1,7 +1,6 @@
 package filetransport
 
 class Linux2AndroidFileTransporter:FileTransporter{
-    override fun transport() {
-
+    override fun transport(source: String, dest: String) {
     }
 }
