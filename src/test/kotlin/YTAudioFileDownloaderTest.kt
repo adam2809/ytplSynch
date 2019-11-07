@@ -1,8 +1,7 @@
 import filedownload.FileDownloader
-import filedownload.InvalidYTURLException
 import filedownload.YTAudioFileDownloader
+import junit.framework.TestCase.assertTrue
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import java.io.File
@@ -34,7 +33,7 @@ class YTAudioFileDownloaderTest{
     @Test
     fun downloadsValidURL(){
         val validTestURL = "https://www.youtube.com/watch?v=nsufd9Ckiko"
-        val downloader: FileDownloader = YTAudioFileDownloader(validTestURL)
+        val downloader: FileDownloader = YTAudioFileDownloader(validTestURL, TEST_YT_FILE_DIR)
 
         downloader.download()
 
@@ -43,15 +42,14 @@ class YTAudioFileDownloaderTest{
 
         val filesInTestDest = getFilesInTestDir()
         assertEquals(1,filesInTestDest.size)
-        println(filesInTestDest[0])
-        assertEquals(getYTDLFileNameFormatted(expectedTitle,expectedVideoId),filesInTestDest[0])
+        assertEquals(getYTDLFileNameFormatted(expectedTitle,expectedVideoId),filesInTestDest[0].name)
 
     }
 
-    @Test(expected = InvalidYTURLException::class)
+    @Test
     fun correctExceptionThrownWhenURLInvalid(){
-        val invalidTestURL = "marcin manganian konikja"
-        val downloader: FileDownloader = YTAudioFileDownloader(invalidTestURL)
+        val invalidTestURL = "marcin manganian koniukja"
+        val downloader: FileDownloader = YTAudioFileDownloader(invalidTestURL, TEST_YT_FILE_DIR)
 
         downloader.download()
 
