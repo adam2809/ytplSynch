@@ -13,6 +13,8 @@ class YTAudioFileDownloader(val ytURL:String,val destDir:String): FileDownloader
 
     override fun download() {
         val (output,error) = completeYTDLCommand.runCommand(File(destDir))
+//              (Needed to distingush from warnings which youtube-dl also puts in error output)
+//              |                                 \/                                          |
         if(error.isNotBlank() && error.contains("ERROR")){
             throw InvalidYTURLException(ytURL)
         }
