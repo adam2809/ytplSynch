@@ -1,6 +1,7 @@
 out
 *.class
 src/test/resources/*
+src/main/kotlin/Main.kt
 
 *.jar
 *.war
