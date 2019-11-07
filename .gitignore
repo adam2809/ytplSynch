@@ -1,5 +1,6 @@
 out
 *.class
+src/test/resources/*
 
 *.jar
 *.war
