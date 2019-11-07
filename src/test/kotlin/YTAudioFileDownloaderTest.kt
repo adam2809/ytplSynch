@@ -1,9 +1,11 @@
 import filedownload.FileDownloader
+import filedownload.InvalidYTURLException
 import filedownload.YTAudioFileDownloader
-import junit.framework.TestCase.assertTrue
-import org.junit.Assert.assertEquals
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.io.File
 import java.nio.file.Files
 
@@ -15,7 +17,7 @@ class YTAudioFileDownloaderTest{
     }
 
 
-    @Before
+    @BeforeEach
     fun clearTestDir(){
         getFilesInTestDir().forEach {
             Files.delete(it.toPath())
@@ -51,7 +53,9 @@ class YTAudioFileDownloaderTest{
         val invalidTestURL = "marcin manganian koniukja"
         val downloader: FileDownloader = YTAudioFileDownloader(invalidTestURL, TEST_YT_FILE_DIR)
 
-        downloader.download()
+        assertThrows<InvalidYTURLException> {
+            downloader.download()
+        }
 
         val filesInTestDest = getFilesInTestDir()
         assertTrue(filesInTestDest.isEmpty())
