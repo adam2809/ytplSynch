@@ -1,5 +1,5 @@
 package filetransport
 
 interface FileTransporter {
-    fun transport()
+    fun transport(source:String,dest:String)
 }

@@ -1,16 +1,83 @@
-import filetransport.FileTransporter
 import filetransport.FileTransporterFactory
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.fail
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import utils.runCommand
+import java.io.File
+import java.io.IOException
 
 class FileTransporterTest{
 
     companion object{
         const val DUMMY_FILE_PATH = "/home/adam/code/ytplSynch/src/test/resources/fileTransporterTestDummyFile.txt"
-        const val DUMMY_FILE_DEST_PATH = "/home/adam/code/ytplSynch/src/test/resources/fileTransporterTestDummyFile.txt"
+        const val DUMMY_FILE_DEST_PATH = "/sdcard/ytplSynchTest/"
+
+        const val INVALID_PATH = "bibibibiBIBIBIBIBIBI"
     }
+
+    @BeforeEach
+    private fun clearTestDirOnDevice(){
+        val baseCommand = mutableListOf(
+            "adb",
+            "shell",
+            "rm",
+            "/sdcard/ytplSynchTest/"
+        )
+
+        val testFilesOnDevice = getTestFilesOnDevice()
+
+        if (testFilesOnDevice.isEmpty()){
+            return
+        }
+
+        testFilesOnDevice.forEach {
+            baseCommand[3] = "$DUMMY_FILE_DEST_PATH$it"
+            val (output,error) = baseCommand.toTypedArray().runCommand(File("."))
+            if (error.isNotEmpty()){
+                fail<Nothing>("Test directory cleanup failed\nThe error was:\n$error")
+            }
+        }
+    }
+
+    private val transporter = FileTransporterFactory.getInstance()
 
     @Test
     fun transportsFileLinux2Android(){
-        val trasnporter:FileTransporter = FileTransporterFactory.getInstance()
+        transporter.transport(DUMMY_FILE_PATH, DUMMY_FILE_DEST_PATH)
+
+        val temp = getTestFilesOnDevice()
+        assertEquals(1,temp.size)
+        assertEquals("fileTransporterTestDummyFile.txt",getTestFilesOnDevice()[0])
+    }
+
+    @Test
+    fun invalidSourcePathThrowsCorrectException(){
+        val e = assertThrows<IOException> {
+            transporter.transport(INVALID_PATH, DUMMY_FILE_DEST_PATH)
+        }
+        assertEquals("Source path ($INVALID_PATH) is invalid",e.message)
+        assertEquals(0,getTestFilesOnDevice().size)
+    }
+
+
+    @Test
+    fun invalidDestPathThrowsCorrectException(){
+        val e = assertThrows<IOException> {
+            transporter.transport(DUMMY_FILE_PATH,INVALID_PATH)
+        }
+        assertEquals("Destination path ($INVALID_PATH) is invalid",e.message)
+        assertEquals(0,getTestFilesOnDevice().size)
+    }
+
+    private fun getTestFilesOnDevice():List<String>{
+        val (output,error) = arrayOf(
+            "adb",
+            "shell",
+            "ls",
+            DUMMY_FILE_DEST_PATH
+        ).runCommand(File("."))
+        return output.split("\n").dropLast(1)
     }
 }
