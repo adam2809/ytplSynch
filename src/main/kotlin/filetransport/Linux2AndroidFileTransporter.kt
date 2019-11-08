@@ -12,18 +12,11 @@ class Linux2AndroidFileTransporter:FileTransporter{
             "push",
             source,
             dest
-        ).runCommand(File(".")).also { println(it) }
+        ).runCommand(File("."))
 
         if(!output.contains("error")){
             return
         }
-        var msg:String
-        with(output){
-            msg = when{
-                contains("no devices/emulators found") -> "No devices connected"
-                else -> "Sth got fucked"
-            }
-        }
-        throw IOException(msg)
+        throw ADBFileTransportException(output)
     }
 }

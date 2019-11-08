@@ -1,3 +1,4 @@
+import filetransport.ADBFileTransportException
 import filetransport.FileTransporterFactory
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.fail
@@ -6,7 +7,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import utils.runCommand
 import java.io.File
-import java.io.IOException
 
 class FileTransporterTest{
 
@@ -54,20 +54,22 @@ class FileTransporterTest{
 
     @Test
     fun invalidSourcePathThrowsCorrectException(){
-        val e = assertThrows<IOException> {
+        val e = assertThrows<ADBFileTransportException> {
             transporter.transport(INVALID_PATH, DUMMY_FILE_DEST_PATH)
         }
-        assertEquals("Source path ($INVALID_PATH) is invalid",e.message)
+        assertEquals("Source path is invalid",e.msg)
+        assertEquals(2,e.errorCode)
         assertEquals(0,getTestFilesOnDevice().size)
     }
 
 
     @Test
     fun invalidDestPathThrowsCorrectException(){
-        val e = assertThrows<IOException> {
+        val e = assertThrows<ADBFileTransportException> {
             transporter.transport(DUMMY_FILE_PATH,INVALID_PATH)
         }
-        assertEquals("Destination path ($INVALID_PATH) is invalid",e.message)
+        assertEquals("Destination path is invalid",e.msg)
+        assertEquals(3,e.errorCode)
         assertEquals(0,getTestFilesOnDevice().size)
     }
 
