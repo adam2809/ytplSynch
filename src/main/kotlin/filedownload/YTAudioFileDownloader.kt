@@ -1,5 +1,6 @@
 package filedownload
 
+import utils.runCommand
 import java.io.BufferedReader
 import java.io.File
 import java.io.IOException
@@ -19,16 +20,5 @@ class YTAudioFileDownloader(val ytURL:String,val destDir:String): FileDownloader
             throw InvalidYTURLException(ytURL)
         }
         downloaded = true
-    }
-
-    fun Array<String>.runCommand(workingDir: File): Pair<String,String> {
-        val proc = ProcessBuilder(*this)
-            .directory(workingDir)
-            .redirectOutput(ProcessBuilder.Redirect.PIPE)
-            .redirectError(ProcessBuilder.Redirect.PIPE)
-            .start()
-
-        proc.waitFor(60, TimeUnit.MINUTES)
-        return Pair(proc.inputStream.bufferedReader().readText(), proc.errorStream.bufferedReader().readText())
     }
 }
