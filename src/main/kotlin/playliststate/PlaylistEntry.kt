@@ -1,6 +1,6 @@
 package playliststate
 
 interface PlaylistEntry{
-    val ytURL:String
+    val ytID:String
     val title:String
 }
