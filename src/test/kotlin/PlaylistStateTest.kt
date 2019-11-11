@@ -6,6 +6,7 @@ import playliststate.PlaylistEntry
 import playliststate.YTPlaylistEntry
 import playliststate.YTPlaylistState
 import utils.getTestFilesOnDeviceFromDir
+import utils.clearDirOnDevice
 
 class PlaylistStateTest{
 
@@ -37,6 +38,6 @@ class PlaylistStateTest{
         val state = DevicePlaylistState(TEST_FILES_DEST)
 
         assertEquals(expectedEntries,state.entries)
-
+        clearDirOnDevice(TEST_FILES_DEST)
     }
 }
