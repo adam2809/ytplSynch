@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import utils.runCommand
+import utils.getTestFilesOnDeviceFromDir
 import java.io.File
 
 class FileTransporterTest{
@@ -26,7 +27,7 @@ class FileTransporterTest{
             "/sdcard/ytplSynchTest/"
         )
 
-        val testFilesOnDevice = getTestFilesOnDevice()
+        val testFilesOnDevice = getTestFilesOnDeviceFromDir(DUMMY_FILE_DEST_PATH)
 
         if (testFilesOnDevice.isEmpty()){
             return
@@ -34,7 +35,7 @@ class FileTransporterTest{
 
         testFilesOnDevice.forEach {
             baseCommand[3] = "$DUMMY_FILE_DEST_PATH$it"
-            val (output,error) = baseCommand.toTypedArray().runCommand(File("."))
+            val (_,error) = baseCommand.toTypedArray().runCommand(File("."))
             if (error.isNotEmpty()){
                 fail<Nothing>("Test directory cleanup failed\nThe error was:\n$error")
             }
@@ -47,9 +48,9 @@ class FileTransporterTest{
     fun transportsFileLinux2Android(){
         transporter.transport(DUMMY_FILE_PATH, DUMMY_FILE_DEST_PATH)
 
-        val temp = getTestFilesOnDevice()
-        assertEquals(1,temp.size)
-        assertEquals("fileTransporterTestDummyFile.txt",getTestFilesOnDevice()[0])
+        val filesInDestDir = getTestFilesOnDeviceFromDir(DUMMY_FILE_DEST_PATH)
+        assertEquals(1,filesInDestDir.size)
+        assertEquals("fileTransporterTestDummyFile.txt",filesInDestDir[0])
     }
 
     @Test
@@ -59,7 +60,7 @@ class FileTransporterTest{
         }
         assertEquals("Source path is invalid",e.msg)
         assertEquals(2,e.errorCode)
-        assertEquals(0,getTestFilesOnDevice().size)
+        assertEquals(0,getTestFilesOnDeviceFromDir(DUMMY_FILE_DEST_PATH).size)
     }
 
 
@@ -70,16 +71,6 @@ class FileTransporterTest{
         }
         assertEquals("Destination path is invalid",e.msg)
         assertEquals(3,e.errorCode)
-        assertEquals(0,getTestFilesOnDevice().size)
-    }
-
-    private fun getTestFilesOnDevice():List<String>{
-        val (output,error) = arrayOf(
-            "adb",
-            "shell",
-            "ls",
-            DUMMY_FILE_DEST_PATH
-        ).runCommand(File("."))
-        return output.split("\n").dropLast(1)
+        assertEquals(0,getTestFilesOnDeviceFromDir(DUMMY_FILE_DEST_PATH).size)
     }
 }

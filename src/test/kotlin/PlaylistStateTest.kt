@@ -22,5 +22,6 @@ class PlaylistStateTest{
     }
     @Test
     fun testDeviceImplementation(){
+
     }
 }
