@@ -1,14 +1,9 @@
 package filedownload
 
 import utils.runCommand
-import java.io.BufferedReader
 import java.io.File
-import java.io.IOException
-import java.io.InputStreamReader
-import java.lang.StringBuilder
-import java.util.concurrent.TimeUnit
 
-class YTAudioFileDownloader(val ytURL:String,val destDir:String): FileDownloader {
+class YTAudioFileDownloader(private val ytURL:String, private val destDir:String): FileDownloader {
     override var downloaded: Boolean = false
     var completeYTDLCommand = arrayOf("youtube-dl","-f","bestaudio[ext=m4a]",ytURL)
 
