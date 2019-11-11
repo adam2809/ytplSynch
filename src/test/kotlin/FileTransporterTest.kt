@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import utils.clearDirOnDevice
 import utils.runCommand
 import utils.getTestFilesOnDeviceFromDir
 import java.io.File
@@ -19,27 +20,8 @@ class FileTransporterTest{
     }
 
     @BeforeEach
-    private fun clearTestDirOnDevice(){
-        val baseCommand = mutableListOf(
-            "adb",
-            "shell",
-            "rm",
-            "/sdcard/ytplSynchTest/"
-        )
-
-        val testFilesOnDevice = getTestFilesOnDeviceFromDir(DUMMY_FILE_DEST_PATH)
-
-        if (testFilesOnDevice.isEmpty()){
-            return
-        }
-
-        testFilesOnDevice.forEach {
-            baseCommand[3] = "$DUMMY_FILE_DEST_PATH$it"
-            val (_,error) = baseCommand.toTypedArray().runCommand(File("."))
-            if (error.isNotEmpty()){
-                fail<Nothing>("Test directory cleanup failed\nThe error was:\n$error")
-            }
-        }
+    private fun setUp(){
+        clearDirOnDevice(DUMMY_FILE_DEST_PATH)
     }
 
     private val transporter = FileTransporterFactory.getInstance()
