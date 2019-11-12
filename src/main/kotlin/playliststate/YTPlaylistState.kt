@@ -20,7 +20,7 @@ class YTPlaylistState(ytURL:String):PlaylistState{
     }
 
     override fun update() {
-        val (output,error) = PL_INFO_COMMAND.runCommand(File("."))
+        val (output,_) = PL_INFO_COMMAND.runCommand(File("."))
         entries = JSONObject(output).getJSONArray("entries").map {
             val entryJSON = (it as JSONObject)
             YTPlaylistEntry(entryJSON.getString("id"),entryJSON.getString("title"))
