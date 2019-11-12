@@ -14,9 +14,8 @@ object Linux2AndroidFileTransporter:FileTransporter{
             dest
         ).runCommand(File("."))
 
-        if(!output.contains("error")){
-            return
+        if(output.contains("error")){
+            throw ADBFileTransportException(output)
         }
-        throw ADBFileTransportException(output)
     }
 }

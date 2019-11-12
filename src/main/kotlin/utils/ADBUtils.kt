@@ -10,6 +10,11 @@ fun getTestFilesOnDeviceFromDir(dir:String):List<String>{
         "ls",
         dir
     ).runCommand(File("."))
+
+    if(error.isNotBlank()){
+        throw IOException("Could not run ls on $dir the error was \n$error")
+    }
+
     return output.split("\n").dropLast(1)
 }
 
@@ -28,7 +33,7 @@ fun clearDirOnDevice(dir:String){
     }
 
     filesOnDevice.forEach {
-        baseCommand[3] = "$dir$it"
+        baseCommand[3] = "$dir'$it'"
         val (_,error) = baseCommand.toTypedArray().runCommand(File("."))
         if (error.isNotEmpty()){
             throw IOException("Could not remove files from $dir on device")

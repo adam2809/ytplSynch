@@ -7,13 +7,15 @@ import playliststate.YTPlaylistEntry
 import playliststate.YTPlaylistState
 import utils.getTestFilesOnDeviceFromDir
 import utils.clearDirOnDevice
+import java.io.File
 
 class PlaylistStateTest{
 
     companion object{
         const val TEST_YT_PLAYLIST = "https://www.youtube.com/watch?list=PL1WyaSvUwdxcXb-V08h4rsRLjGCjKoUVd"
-        const val TEST_FILES_DIR = "/home/adam/code/ytplSynch/src/test/resources/PLStatusTestFiles/"
-        const val TEST_FILES_DEST = "/sdcard/ytplSynchTest/"
+
+        const val TEST_FILES_DIR = "/home/adam/code/ytplSynch/src/test/resources/PLStatusTestFiles"
+        const val TEST_FILES_DEST = "/sdcard/ytplSynchTest"
     }
 
 
@@ -30,14 +32,18 @@ class PlaylistStateTest{
     }
     @Test
     fun testDeviceImplementation(){
+        clearDirOnDevice("$TEST_FILES_DEST/")
         val transporter = FileTransporterFactory.getInstance()
-        getTestFilesOnDeviceFromDir(TEST_FILES_DIR).forEach {
-            transporter.transport("$TEST_FILES_DIR$it", TEST_FILES_DEST)
+        getFilesInTestDir().forEach {
+            transporter.transport("$TEST_FILES_DIR/$it", TEST_FILES_DEST)
         }
 
         val state = DevicePlaylistState(TEST_FILES_DEST)
 
         assertEquals(expectedEntries,state.entries)
-        clearDirOnDevice(TEST_FILES_DEST)
+    }
+
+    private fun getFilesInTestDir():List<String>{
+        return File(TEST_FILES_DIR).walk().toList().drop(1).map {it.name}
     }
 }
