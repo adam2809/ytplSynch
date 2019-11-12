@@ -3,6 +3,8 @@ package playliststate
 import utils.runCommand
 import java.io.File
 
+import org.json.*
+
 class YTPlaylistState(ytURL:String):PlaylistState{
     override var entries: List<PlaylistEntry> = arrayListOf()
 
@@ -19,7 +21,10 @@ class YTPlaylistState(ytURL:String):PlaylistState{
 
     override fun update() {
         val (output,error) = PL_INFO_COMMAND.runCommand(File("."))
-
+        entries = JSONObject(output).getJSONArray("entries").map {
+            val entryJSON = (it as JSONObject)
+            YTPlaylistEntry(entryJSON.getString("id"),entryJSON.getString("title"))
+        }
     }
 }
 
