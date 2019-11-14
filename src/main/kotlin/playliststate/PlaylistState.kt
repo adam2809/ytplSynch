@@ -1,7 +1,11 @@
 package playliststate
 
-interface PlaylistState{
-    var entries:List<PlaylistEntry>
+abstract class PlaylistState{
+    abstract var entries:List<YTPlaylistEntry>
 
-    fun update()
+    abstract fun update()
+
+    operator fun minus(state: PlaylistState):List<YTPlaylistEntry>{
+        return entries.filter { !state.entries.contains(it) }
+    }
 }

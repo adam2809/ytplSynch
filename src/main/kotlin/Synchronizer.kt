@@ -8,7 +8,10 @@ class Synchronizer(sourcePL:String, destOnDevice: Path, private val tempDir:Path
     private val devicePLState = DevicePlaylistState(destOnDevice)
 
     fun synchronize(){
-        
+        YTPLState.update()
+        devicePLState.update()
+
+
     }
     
 } 

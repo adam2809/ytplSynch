@@ -1,4 +1,4 @@
 package playliststate
 
 
-data class YTPlaylistEntry(override val ytID: String, override val title: String) :PlaylistEntry
+data class YTPlaylistEntry(val ytID: String, val title: String)
