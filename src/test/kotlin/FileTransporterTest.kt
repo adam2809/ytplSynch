@@ -9,14 +9,14 @@ import utils.clearDirOnDevice
 import utils.getFilesOnDeviceFromPath
 import utils.runCommand
 import java.io.File
+import java.nio.file.Path
+import java.nio.file.Paths
 
 class FileTransporterTest{
 
     companion object{
-        const val DUMMY_FILE_PATH = "/home/adam/code/ytplSynch/src/test/resources/fileTransporterTestDummyFile.txt"
-        const val DUMMY_FILE_DEST_PATH = "/sdcard/ytplSynchTest/"
-
-        const val INVALID_PATH = "bibibibiBIBIBIBIBIBI"
+        val DUMMY_FILE_PATH = Paths.get("/home/adam/code/ytplSynch/src/test/resources/fileTransporterTestDummyFile.txt")
+        val INVALID_PATH = Paths.get("bibibibiBIBIBIBIBIBI")
     }
 
     @BeforeEach
@@ -28,7 +28,7 @@ class FileTransporterTest{
 
     @Test
     fun transportsFileLinux2Android(){
-        transporter.transport(DUMMY_FILE_PATH, DUMMY_FILE_DEST_PATH)
+        transporter.transport(DUMMY_FILE_PATH, TestUtils.TestDirs.testDirOnDevice)
 
         val filesInDestDir = getFilesOnDeviceFromPath(TestUtils.TestDirs.testDirOnDevice)
         assertEquals(1,filesInDestDir.size)
@@ -38,7 +38,7 @@ class FileTransporterTest{
     @Test
     fun invalidSourcePathThrowsCorrectException(){
         val e = assertThrows<ADBFileTransportException> {
-            transporter.transport(INVALID_PATH, DUMMY_FILE_DEST_PATH)
+            transporter.transport(INVALID_PATH, TestUtils.TestDirs.testDirOnDevice)
         }
         assertEquals("Source path is invalid",e.msg)
         assertEquals(2,e.errorCode)

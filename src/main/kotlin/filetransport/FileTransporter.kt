@@ -1,5 +1,7 @@
 package filetransport
 
+import java.nio.file.Path
+
 interface FileTransporter {
-    fun transport(source:String,dest:String)
+    fun transport(source:Path,dest: Path)
 }

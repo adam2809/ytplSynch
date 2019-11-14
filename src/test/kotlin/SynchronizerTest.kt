@@ -33,7 +33,7 @@ class PLSynchronizerTest{
     fun testSynchToPartlySynched(){
         val transporter = FileTransporterFactory.getInstance()
         getFilesInTestDir().slice(0..1).forEach {
-            transporter.transport("$TEST_FILES_DIR/$it", TEST_DEST_DIR)
+//            transporter.transport("$TEST_FILES_DIR/$it", TEST_DEST_DIR)
         }
 
     }
