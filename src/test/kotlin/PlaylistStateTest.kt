@@ -14,12 +14,12 @@ class PlaylistStateTest{
 
     @Test
     fun testYTImplementation(){
-        val state = YTPlaylistState(TestUtils.TestDirs.testYTPL)
+        val state = YTPlaylistState(TestUtils.testYTPL)
         assertEquals(expectedEntries,state.entries)
     }
     @Test
     fun testDeviceImplementation(){
-        val state = DevicePlaylistState(TestUtils.TestDirs.testYTPLTransportedPath)
+        val state = DevicePlaylistState(TestUtils.testYTPLTransportedPath)
 
         assertEquals(expectedEntries,state.entries)
     }
