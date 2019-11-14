@@ -15,10 +15,6 @@ class YTPlaylistState(ytURL:String):PlaylistState{
         ytURL
     )
 
-    init {
-        update()
-    }
-
     override fun update() {
         val (output,_) = PL_INFO_COMMAND.runCommand(File("."))
         entries = JSONObject(output).getJSONArray("entries").map {

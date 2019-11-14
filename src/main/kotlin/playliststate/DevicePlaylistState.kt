@@ -8,10 +8,6 @@ class DevicePlaylistState(private val path: Path):PlaylistState{
 //    TODO no idea how to make the setter private so pls don't use it its not supposed to be used
     override var entries: List<PlaylistEntry> = emptyList()
 
-    init {
-        update()
-    }
-
     override fun update() {
         entries = getFilesOnDeviceFromPath(path).map(::extractPlaylistEntryFilename)
     }
