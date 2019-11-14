@@ -8,7 +8,7 @@ class YTAudioFileDownloader(private val ytURL:String, private val destDir:String
     var completeYTDLCommand = arrayOf("youtube-dl","-f","bestaudio[ext=m4a]",ytURL)
 
     override fun download() {
-        val (output,error) = completeYTDLCommand.runCommand(File(destDir))
+        val (_,error) = completeYTDLCommand.runCommand(File(destDir))
 //              (Needed to distingush from warnings which youtube-dl also puts in error output)
 //              |                                 \/                                          |
         if(error.isNotBlank() && error.contains("ERROR")){

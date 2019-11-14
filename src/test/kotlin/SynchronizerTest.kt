@@ -7,7 +7,6 @@ import utils.clearDirOnDevice
 
 import utils.getTestFilesOnDeviceFromDir
 import java.io.File
-import java.nio.file.Files
 
 class PLSynchronizerTest{
 
