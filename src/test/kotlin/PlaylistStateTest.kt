@@ -30,18 +30,8 @@ class PlaylistStateTest{
     }
     @Test
     fun testDeviceImplementation(){
-        clearDirOnDevice("$TEST_FILES_DEST/")
-        val transporter = FileTransporterFactory.getInstance()
-        getFilesInTestDir().forEach {
-            transporter.transport("$TEST_FILES_DIR/$it", TEST_FILES_DEST)
-        }
-
         val state = DevicePlaylistState(TEST_FILES_DEST)
 
         assertEquals(expectedEntries,state.entries)
-    }
-
-    private fun getFilesInTestDir():List<String>{
-        return File(TEST_FILES_DIR).walk().toList().drop(1).map {it.name}
     }
 }
