@@ -1,9 +1,10 @@
 package playliststate
 
 import utils.getFilesOnDeviceFromPath
+import java.nio.file.Path
 import java.nio.file.Paths
 
-class DevicePlaylistState(private val dir:String):PlaylistState{
+class DevicePlaylistState(private val path: Path):PlaylistState{
 //    TODO no idea how to make the setter private so pls don't use it its not supposed to be used
     override var entries: List<PlaylistEntry> = emptyList()
 
@@ -12,7 +13,7 @@ class DevicePlaylistState(private val dir:String):PlaylistState{
     }
 
     override fun update() {
-        entries = getFilesOnDeviceFromPath(Paths.get(dir)).map(::extractPlaylistEntryFilename)
+        entries = getFilesOnDeviceFromPath(path).map(::extractPlaylistEntryFilename)
     }
 
     private fun extractPlaylistEntryFilename(filename:String):YTPlaylistEntry{

@@ -5,7 +5,6 @@ class Synchronizer(private val sourcePL:String, private val destOnDevice:String,
 
     fun synchronize(){
         val YTPLState = YTPlaylistState(sourcePL)
-        val devicePLState = DevicePlaylistState(destOnDevice)
     }
     
 } 
