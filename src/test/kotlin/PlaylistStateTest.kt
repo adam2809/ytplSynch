@@ -5,7 +5,6 @@ import playliststate.DevicePlaylistState
 import playliststate.PlaylistEntry
 import playliststate.YTPlaylistEntry
 import playliststate.YTPlaylistState
-import utils.getTestFilesOnDeviceFromDir
 import utils.clearDirOnDevice
 import java.io.File
 
@@ -13,7 +12,6 @@ class PlaylistStateTest{
 
     companion object{
         const val TEST_YT_PLAYLIST = "https://www.youtube.com/watch?list=PL1WyaSvUwdxcXb-V08h4rsRLjGCjKoUVd"
-
         const val TEST_FILES_DIR = "/home/adam/code/ytplSynch/src/test/resources/PLStatusTestFiles"
         const val TEST_FILES_DEST = "/sdcard/ytplSynchTest"
     }
