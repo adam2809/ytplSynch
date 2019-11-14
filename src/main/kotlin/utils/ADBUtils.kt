@@ -3,6 +3,7 @@ package utils
 import java.io.File
 import java.io.IOException
 import java.nio.file.Path
+import java.nio.file.Paths
 
 fun getFilesOnDeviceFromPath(path: Path):List<String>{
     val (output,error) = arrayOf(
@@ -20,13 +21,6 @@ fun getFilesOnDeviceFromPath(path: Path):List<String>{
 }
 
 fun clearDirOnDevice(path:Path){
-    val baseCommand = mutableListOf(
-        "adb",
-        "shell",
-        "rm",
-        ""
-    )
-
     val filesOnDevice = getFilesOnDeviceFromPath(path)
 
     if (filesOnDevice.isEmpty()){
@@ -34,10 +28,20 @@ fun clearDirOnDevice(path:Path){
     }
 
     filesOnDevice.forEach {
-        baseCommand[3] = "${path}/'$it'"
-        val (_,error) = baseCommand.toTypedArray().runCommand(File("."))
-        if (error.isNotEmpty()){
-            throw IOException("Could not remove files from $path on device")
-        }
+        deleteFileOnDevice(Paths.get("$path/'$it'"))
+    }
+}
+
+fun deleteFileOnDevice(path:Path){
+    val baseCommand = arrayOf(
+        "adb",
+        "shell",
+        "rm",
+        "$path"
+    )
+
+    val (_,error) = baseCommand.runCommand(File("."))
+    if (error.isNotEmpty()){
+        throw IOException("Could not remove files from $path on device")
     }
 }

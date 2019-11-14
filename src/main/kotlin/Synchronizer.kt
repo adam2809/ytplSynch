@@ -3,8 +3,11 @@ import filetransport.FileTransporterFactory
 import playliststate.DevicePlaylistState
 import playliststate.YTPlaylistEntry
 import playliststate.YTPlaylistState
+import utils.deleteFileOnDevice
+import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.streams.toList
 
 class Synchronizer(sourcePL:String, private val destOnDevice: Path, private val cache:Path){
 
@@ -16,11 +19,15 @@ class Synchronizer(sourcePL:String, private val destOnDevice: Path, private val 
     }
 
     fun synchronize(){
+        clearCache()
+
         YTPLState.update()
         devicePLState.update()
 
         removeEntries(devicePLState - YTPLState)
         addEntries(YTPLState - devicePLState)
+
+        clearCache()
     }
 
     private fun addEntries(toAdd:List<YTPlaylistEntry>){
@@ -32,7 +39,11 @@ class Synchronizer(sourcePL:String, private val destOnDevice: Path, private val 
         toAdd.map {
             YTAudioFileDownloader(it.ytID,cache)
         }.forEach {
-            it.download()
+            try {
+                it.download()
+            }catch(e:Exception){
+                println(e.message)
+            }
         }
     }
 
@@ -44,10 +55,18 @@ class Synchronizer(sourcePL:String, private val destOnDevice: Path, private val 
     }
 
     private fun removeEntries(toRemove:List<YTPlaylistEntry>){
-        
+        toRemove.forEach {
+            deleteFileOnDevice(createPathFromYTPLEntry(destOnDevice,it))
+        }
     }
 
     private fun createPathFromYTPLEntry(base:Path,entry:YTPlaylistEntry):Path{
         return Paths.get("$base/${YT_DL_FILE_NAME_FORMAT.format(entry.title,entry.ytID)}")
+    }
+
+    fun clearCache(){
+        Files.walk(cache).toList().drop(1).forEach {
+            Files.delete(it)
+        }
     }
 }
