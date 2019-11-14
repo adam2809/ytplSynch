@@ -2,9 +2,13 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
-val testYTPLDownloadedPath = Paths.get("/home/adam/code/ytplSynch/src/test/resources/PLStatusTestFiles")
-val testYTPLTransportedPath = Paths.get("/sdcard/YTPLDownloaded")
-val testDirOnDevice = Paths.get("/sdcard/ytplSynchTest")
+
+
+object TestDirs{
+    val testYTPLDownloadedPath = Paths.get("/home/adam/code/ytplSynch/src/test/resources/PLStatusTestFiles")
+    val testYTPLTransportedPath = Paths.get("/sdcard/YTPLDownloaded")
+    val testDirOnDevice = Paths.get("/sdcard/ytplSynchTest")
+}
 
 fun clearPath(path:Path){
     getPathsInPath(path).forEach {
@@ -19,5 +23,3 @@ fun getPathsInPath(path: Path): List<Path> {
     }
     return res.drop(1)
 }
-
-clearPath(Paths.get("/home/adam/code/ytplSynch/src/test/resources/TestDestYTFileDownload"))

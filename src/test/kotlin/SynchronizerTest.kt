@@ -3,9 +3,9 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import utils.clearDirOnDevice
+import utils.getFilesOnDeviceFromPath
 
 
-import utils.getTestFilesOnDeviceFromDir
 import java.io.File
 
 class PLSynchronizerTest{
@@ -19,14 +19,14 @@ class PLSynchronizerTest{
 
     @BeforeEach
     fun setUp(){
-        clearDirOnDevice(TEST_DEST_DIR)
+        clearDirOnDevice(TestUtils.TestDirs.testDirOnDevice)
     }
 
     @Test
     fun testSynchToEmpty(){
         syncher.synchronize()
 
-        assertEquals(3,getTestFilesOnDeviceFromDir(TEST_DEST_DIR).size)
+        assertEquals(3,getFilesOnDeviceFromPath(TestUtils.TestDirs.testDirOnDevice).size)
     }
 
     @Test

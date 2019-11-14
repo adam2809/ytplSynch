@@ -1,7 +1,7 @@
 package playliststate
 
-import utils.getTestFilesOnDeviceFromDir
-import java.lang.Exception
+import utils.getFilesOnDeviceFromPath
+import java.nio.file.Paths
 
 class DevicePlaylistState(private val dir:String):PlaylistState{
 //    TODO no idea how to make the setter private so pls don't use it its not supposed to be used
@@ -12,7 +12,7 @@ class DevicePlaylistState(private val dir:String):PlaylistState{
     }
 
     override fun update() {
-        entries = getTestFilesOnDeviceFromDir(dir).map(::extractPlaylistEntryFilename)
+        entries = getFilesOnDeviceFromPath(Paths.get(dir)).map(::extractPlaylistEntryFilename)
     }
 
     private fun extractPlaylistEntryFilename(filename:String):YTPlaylistEntry{

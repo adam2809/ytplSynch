@@ -6,8 +6,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import utils.clearDirOnDevice
+import utils.getFilesOnDeviceFromPath
 import utils.runCommand
-import utils.getTestFilesOnDeviceFromDir
 import java.io.File
 
 class FileTransporterTest{
@@ -21,7 +21,7 @@ class FileTransporterTest{
 
     @BeforeEach
     private fun setUp(){
-        clearDirOnDevice(DUMMY_FILE_DEST_PATH)
+        clearDirOnDevice(TestUtils.TestDirs.testDirOnDevice)
     }
 
     private val transporter = FileTransporterFactory.getInstance()
@@ -30,7 +30,7 @@ class FileTransporterTest{
     fun transportsFileLinux2Android(){
         transporter.transport(DUMMY_FILE_PATH, DUMMY_FILE_DEST_PATH)
 
-        val filesInDestDir = getTestFilesOnDeviceFromDir(DUMMY_FILE_DEST_PATH)
+        val filesInDestDir = getFilesOnDeviceFromPath(TestUtils.TestDirs.testDirOnDevice)
         assertEquals(1,filesInDestDir.size)
         assertEquals("fileTransporterTestDummyFile.txt",filesInDestDir[0])
     }
@@ -42,7 +42,7 @@ class FileTransporterTest{
         }
         assertEquals("Source path is invalid",e.msg)
         assertEquals(2,e.errorCode)
-        assertEquals(0,getTestFilesOnDeviceFromDir(DUMMY_FILE_DEST_PATH).size)
+        assertEquals(0,getFilesOnDeviceFromPath(TestUtils.TestDirs.testDirOnDevice).size)
     }
 
 
@@ -53,6 +53,6 @@ class FileTransporterTest{
         }
         assertEquals("Destination path is invalid",e.msg)
         assertEquals(3,e.errorCode)
-        assertEquals(0,getTestFilesOnDeviceFromDir(DUMMY_FILE_DEST_PATH).size)
+        assertEquals(0,getFilesOnDeviceFromPath(TestUtils.TestDirs.testDirOnDevice).size)
     }
 }
