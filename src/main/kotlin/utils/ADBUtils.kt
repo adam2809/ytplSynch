@@ -34,7 +34,7 @@ fun clearDirOnDevice(path:Path){
     }
 
     filesOnDevice.forEach {
-        baseCommand[3] = "${path}/'$it'".also { println(it) }
+        baseCommand[3] = "${path}/'$it'"
         val (_,error) = baseCommand.toTypedArray().runCommand(File("."))
         if (error.isNotEmpty()){
             throw IOException("Could not remove files from $path on device")
