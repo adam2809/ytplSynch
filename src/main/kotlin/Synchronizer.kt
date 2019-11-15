@@ -14,6 +14,10 @@ class Synchronizer(sourcePL:String, private val destOnDevice: Path, private val 
     private val YTPLState = YTPlaylistState(sourcePL)
     private val devicePLState = DevicePlaylistState(destOnDevice)
 
+    val couldNotDownload = mutableListOf<YTAudioFileDownloader>()
+    val couldNotTransport = mutableListOf<YTPlaylistEntry>()
+    val couldNotRemove = mutableListOf<YTPlaylistEntry>()
+
     companion object {
         const val YT_DL_FILE_NAME_FORMAT = "%s-%s.m4a"
     }
@@ -43,6 +47,7 @@ class Synchronizer(sourcePL:String, private val destOnDevice: Path, private val 
                 it.download()
             }catch(e:Exception){
                 println(e.message)
+                couldNotDownload.add(it)
             }
         }
     }
@@ -50,13 +55,23 @@ class Synchronizer(sourcePL:String, private val destOnDevice: Path, private val 
     private fun transportCacheToDevice(toAdd:List<YTPlaylistEntry>) {
         val transporter = FileTransporterFactory.getInstance()
         toAdd.forEach {
-            transporter.transport(createPathFromYTPLEntry(cache,it),destOnDevice)
+            try{
+                transporter.transport(createPathFromYTPLEntry(cache,it),destOnDevice)
+            }catch (e:Exception){
+                println(e.message)
+                couldNotTransport.add(it)
+            }
         }
     }
 
     private fun removeEntries(toRemove:List<YTPlaylistEntry>){
         toRemove.forEach {
-            deleteFileOnDevice(createPathFromYTPLEntry(destOnDevice,it))
+            try {
+                deleteFileOnDevice(createPathFromYTPLEntry(destOnDevice,it))
+            }catch (e:Exception){
+                println(e.message)
+                couldNotRemove.add(it)
+            }
         }
     }
 
