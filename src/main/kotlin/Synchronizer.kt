@@ -1,18 +1,15 @@
 import filedownload.YTAudioFileDownloader
 import filetransport.FileTransporterFactory
-import playliststate.DevicePlaylistState
+import playliststate.PlaylistState
 import playliststate.YTPlaylistEntry
-import playliststate.YTPlaylistState
 import utils.deleteFileOnDevice
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.streams.toList
 
-class Synchronizer(sourcePL:String, private val destOnDevice: Path, private val cache:Path){
-
-    private val YTPLState = YTPlaylistState(sourcePL)
-    private val devicePLState = DevicePlaylistState(destOnDevice)
+class Synchronizer(private val sourceState: PlaylistState, private val destState: PlaylistState,
+                   private val destOnDevice:Path, private val cache:Path){
 
     companion object {
         const val YT_DL_FILE_NAME_FORMAT = "%s-%s.m4a"
@@ -21,11 +18,11 @@ class Synchronizer(sourcePL:String, private val destOnDevice: Path, private val 
     fun synchronize(){
         clearCache()
 
-        YTPLState.update()
-        devicePLState.update()
+        sourceState.update()
+        destState.update()
 
-        removeEntries(devicePLState - YTPLState)
-        addEntries(YTPLState - devicePLState)
+        removeEntries(destState - sourceState)
+        addEntries(sourceState - destState)
 
         clearCache()
     }
@@ -39,11 +36,7 @@ class Synchronizer(sourcePL:String, private val destOnDevice: Path, private val 
         toAdd.map {
             YTAudioFileDownloader(it.ytID,cache)
         }.forEach {
-            try {
-                it.download()
-            }catch(e:Exception){
-                println(e.message)
-            }
+            it.download()
         }
     }
 
@@ -64,7 +57,7 @@ class Synchronizer(sourcePL:String, private val destOnDevice: Path, private val 
         return Paths.get("$base/${YT_DL_FILE_NAME_FORMAT.format(entry.title,entry.ytID)}")
     }
 
-    fun clearCache(){
+    private fun clearCache(){
         Files.walk(cache).toList().drop(1).forEach {
             Files.delete(it)
         }
