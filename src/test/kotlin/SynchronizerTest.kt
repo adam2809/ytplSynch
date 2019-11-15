@@ -1,18 +1,59 @@
+import filedownload.FileDownloader
+import filedownload.FileDownloaderFactory
 import filetransport.FileTransporterFactory
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
+import playliststate.DevicePlaylistState
+import playliststate.PlaylistState
+import playliststate.YTPlaylistEntry
 import utils.clearDirOnDevice
 import utils.getFilesOnDeviceFromPath
 import utils.runCommand
 
 
 import java.io.File
+import java.nio.file.Path
 import java.nio.file.Paths
 
 class PLSynchronizerTest{
 
-    private val syncher = Synchronizer(TestUtils.testYTPL,TestUtils.testDirOnDevice,TestUtils.testEmptyPath)
+    val testYTPLState = object:PlaylistState(){
+        override var entries: List<YTPlaylistEntry> = emptyList()
+            get() = listOf(
+                YTPlaylistEntry("nsufd9Ckiko","Alexander Robotnick - Undicidisco (Justin VanDerVolgen Edit)"),
+                YTPlaylistEntry("oG0XcvGLoq0","Tiger & Woods - Balloon"),
+                YTPlaylistEntry("u7kaOntQbsw","William Onyeabor - Better Change Your Mind (Official)")
+                )
+
+        override fun update() {
+        }
+    }
+
+    val testDownloaderFactory = object:FileDownloaderFactory{
+        override fun getInstance(source: String, dest: Path): FileDownloader {
+
+            return object:FileDownloader{
+                override var downloaded: Boolean = false
+                var i=0
+
+                private val filesToTouch = listOf(
+                        "Alexander Robotnick - Undicidisco (Justin VanDerVolgen Edit)-nsufd9Ckiko.m4a",
+                        "Tiger & Woods - Balloon-oG0XcvGLoq0.m4a",
+                        "William Onyeabor - Better Change Your Mind (Official)-u7kaOntQbsw.m4a"
+                    )
+
+                override fun download() {
+                    arrayOf("touch","$dest/${filesToTouch[i++]}").runCommand(File("."))
+                }
+
+            }
+        }
+
+    }
+
+    private val syncher = Synchronizer(testYTPLState, DevicePlaylistState(TestUtils.testDirOnDevice),
+                                       testDownloaderFactory,TestUtils.testDirOnDevice,TestUtils.testEmptyPath)
 
     private val expectedFiles = listOf<String>(
         "Alexander Robotnick - Undicidisco (Justin VanDerVolgen Edit)-nsufd9Ckiko.m4a",

@@ -1,3 +1,4 @@
+import filedownload.FileDownloaderFactory
 import filedownload.YTAudioFileDownloader
 import filetransport.FileTransporterFactory
 import playliststate.PlaylistState
@@ -9,7 +10,7 @@ import java.nio.file.Paths
 import kotlin.streams.toList
 
 class Synchronizer(private val sourceState: PlaylistState, private val destState: PlaylistState,
-                   private val destOnDevice:Path, private val cache:Path){
+                   private val downloaderFactory:FileDownloaderFactory, private val destOnDevice:Path, private val cache:Path){
 
     companion object {
         const val YT_DL_FILE_NAME_FORMAT = "%s-%s.m4a"
@@ -34,7 +35,7 @@ class Synchronizer(private val sourceState: PlaylistState, private val destState
 
     private fun downloadToCache(toAdd:List<YTPlaylistEntry>){
         toAdd.map {
-            YTAudioFileDownloader(it.ytID,cache)
+            downloaderFactory.getInstance(it.ytID,cache)
         }.forEach {
             it.download()
         }
