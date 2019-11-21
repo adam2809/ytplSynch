@@ -7,9 +7,7 @@ import org.junit.jupiter.api.BeforeEach
 import playliststate.DevicePlaylistState
 import playliststate.PlaylistState
 import playliststate.YTPlaylistEntry
-import utils.clearDirOnDevice
-import utils.getFilesOnDeviceFromPath
-import utils.runCommand
+import utils.*
 
 
 import java.io.File
@@ -18,44 +16,23 @@ import java.nio.file.Paths
 
 class PLSynchronizerTest{
 
-    val testYTPLState = object:PlaylistState(){
-        override var entries: List<YTPlaylistEntry> = emptyList()
-            get() = listOf(
-                YTPlaylistEntry("nsufd9Ckiko","Alexander Robotnick - Undicidisco (Justin VanDerVolgen Edit)"),
-                YTPlaylistEntry("oG0XcvGLoq0","Tiger & Woods - Balloon"),
-                YTPlaylistEntry("u7kaOntQbsw","William Onyeabor - Better Change Your Mind (Official)")
-                )
+    private val testYTPLState = object:PlaylistState(){
+        override var entries: List<YTPlaylistEntry> = listOf(
+            YTPlaylistEntry("nsufd9Ckiko","Alexander Robotnick - Undicidisco (Justin VanDerVolgen Edit)"),
+            YTPlaylistEntry("oG0XcvGLoq0","Tiger & Woods - Balloon"),
+            YTPlaylistEntry("u7kaOntQbsw","William Onyeabor - Better Change Your Mind (Official)")
+        )
 
         override fun update() {
         }
     }
 
-    val testDownloaderFactory = object:FileDownloaderFactory{
-        override fun getInstance(source: String, dest: Path): FileDownloader {
-
-            return object:FileDownloader{
-                override var downloaded: Boolean = false
-                var i=0
-
-                private val filesToTouch = listOf(
-                        "Alexander Robotnick - Undicidisco (Justin VanDerVolgen Edit)-nsufd9Ckiko.m4a",
-                        "Tiger & Woods - Balloon-oG0XcvGLoq0.m4a",
-                        "William Onyeabor - Better Change Your Mind (Official)-u7kaOntQbsw.m4a"
-                    )
-
-                override fun download() {
-                    arrayOf("touch","$dest/${filesToTouch[i++]}").runCommand(File("."))
-                }
-
-            }
-        }
-
-    }
+    private val testDownloaderFactory = TestFileDownloaderFactory()
 
     private val syncher = Synchronizer(testYTPLState, DevicePlaylistState(TestUtils.testDirOnDevice),
-                                       testDownloaderFactory,TestUtils.testDirOnDevice,TestUtils.testEmptyPath)
+                                       testDownloaderFactory, TestUtils.testDirOnDevice, TestUtils.testEmptyPath)
 
-    private val expectedFiles = listOf<String>(
+    private val expectedFiles = listOf(
         "Alexander Robotnick - Undicidisco (Justin VanDerVolgen Edit)-nsufd9Ckiko.m4a",
         "Tiger & Woods - Balloon-oG0XcvGLoq0.m4a",
         "William Onyeabor - Better Change Your Mind (Official)-u7kaOntQbsw.m4a"
@@ -69,23 +46,23 @@ class PLSynchronizerTest{
 
     @Test
     fun testSynchToEmpty(){
-        syncher.synchronize()
-
         synchAndAssert()
     }
 
     @Test
     fun testSynchToPartlySynched(){
         val transporter = FileTransporterFactory.getInstance()
-        transporter.transport(Paths.get(TestUtils.testYTPLDownloadedPath.toString()+"/Alexander Robotnick - Undicidisco (Justin VanDerVolgen Edit)-nsufd9Ckiko.m4a"),TestUtils.testDirOnDevice)
-
+        transporter.transport(Paths.get(TestUtils.testYTPLDownloadedPath.toString()+"/Alexander Robotnick - Undicidisco (Justin VanDerVolgen Edit)-nsufd9Ckiko.m4a"),
+            TestUtils.testDirOnDevice)
+        
         synchAndAssert()
     }
 
     @Test
     fun `test in a case when some files are to be removed and some added`(){
         val transporter = FileTransporterFactory.getInstance()
-        transporter.transport(Paths.get(TestUtils.testYTPLDownloadedPath.toString()+"/Alexander Robotnick - Undicidisco (Justin VanDerVolgen Edit)-nsufd9Ckiko.m4a"),TestUtils.testDirOnDevice)
+        transporter.transport(Paths.get(TestUtils.testYTPLDownloadedPath.toString()+"/Alexander Robotnick - Undicidisco (Justin VanDerVolgen Edit)-nsufd9Ckiko.m4a"),
+            TestUtils.testDirOnDevice)
         arrayOf(
             "adb",
             "shell",

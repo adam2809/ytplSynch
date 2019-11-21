@@ -20,4 +20,10 @@ class ADBFileTransportException(private val adbOutput: String) : Throwable() {
             errorCode = e
         }
     }
+    override fun toString(): String {
+        return "A file could not have been transported (errorCode=$errorCode) the adb output was:" +
+                "$adbOutput\n" +
+                "Stack trace was:\n" +
+                "super.toString()"
+    }
 }
