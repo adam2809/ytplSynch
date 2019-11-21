@@ -12,25 +12,36 @@ import java.nio.file.Paths
 class FileTransporterTest{
 
     companion object{
-        val DUMMY_FILE_PATH = Paths.get("/home/adam/code/ytplSynch/src/test/resources/fileTransporterTestDummyFile.txt")
+        val DUMMY_FILE_PATH = Paths.get("/home/adam/code/ytplSynch/src/test/resources/FileTransporterTestFiles/fileTransporterTestDummyFile.txt")
+        val TEST_FILE_PATH = Paths.get("/home/adam/code/ytplSynch/src/test/resources/FileTransporterTestFiles/Le Cliché - Nothing is Original-zsvmGbJo33A.m4a")
         val INVALID_PATH = Paths.get("bibibibiBIBIBIBIBIBI")
     }
+
+    private val transporter = FileTransporterFactory.getInstance()
 
     @BeforeEach
     private fun setUp(){
         clearDirOnDevice(TestUtils.testDirOnDevice)
     }
 
-    private val transporter = FileTransporterFactory.getInstance()
-
     @Test
-    fun transportsFileLinux2Android(){
+    fun transportsFileLinux2Android0(){
         transporter.transport(DUMMY_FILE_PATH, TestUtils.testDirOnDevice)
 
         val filesInDestDir = getFilesOnDeviceFromPath(TestUtils.testDirOnDevice)
         assertEquals(1,filesInDestDir.size)
         assertEquals("fileTransporterTestDummyFile.txt",filesInDestDir[0])
     }
+
+    @Test
+    fun transportsFileLinux2Android1(){
+        transporter.transport(TEST_FILE_PATH,TestUtils.testDirOnDevice)
+
+        val filesInDestDir = getFilesOnDeviceFromPath(TestUtils.testDirOnDevice)
+        assertEquals(1,filesInDestDir.size)
+        assertEquals("Le Cliché - Nothing is Original-zsvmGbJo33A.m4a",filesInDestDir[0])
+    }
+
 
     @Test
     fun invalidSourcePathThrowsCorrectException(){
@@ -41,7 +52,6 @@ class FileTransporterTest{
         assertEquals(2,e.errorCode)
         assertEquals(0,getFilesOnDeviceFromPath(TestUtils.testDirOnDevice).size)
     }
-
 
     @Test
     fun invalidDestPathThrowsCorrectException(){
