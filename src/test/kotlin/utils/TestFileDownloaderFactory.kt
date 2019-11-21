@@ -3,6 +3,7 @@ package utils
 import filedownload.FileDownloader
 import filedownload.FileDownloaderFactory
 import java.io.File
+import java.lang.Exception
 import java.nio.file.Path
 
 class TestFileDownloaderFactory :FileDownloaderFactory{
@@ -21,6 +22,9 @@ class TestFileDownloader(private val source:String, private val dest:Path):FileD
     )
 
     override fun download() {
+        if(!idToTitleMapping.containsKey(source)){
+            throw Exception()
+        }
         File("${dest}/${idToTitleMapping[source]}-$source.m4a").createNewFile()
     }
 

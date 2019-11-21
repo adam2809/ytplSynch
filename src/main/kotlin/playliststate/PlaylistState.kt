@@ -8,4 +8,8 @@ abstract class PlaylistState{
     operator fun minus(state: PlaylistState):List<YTPlaylistEntry>{
         return entries.filter { !state.entries.contains(it) }
     }
+
+    operator fun get(i:Int):YTPlaylistEntry{
+        return entries[i]
+    }
 }

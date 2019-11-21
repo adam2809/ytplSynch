@@ -27,6 +27,18 @@ class PLSynchronizerTest{
         }
     }
 
+    private val testYTPLStateWithInvalid = object:PlaylistState(){
+        override var entries: List<YTPlaylistEntry> = listOf(
+            YTPlaylistEntry("nsufd9Ckiko","Alexander Robotnick - Undicidisco (Justin VanDerVolgen Edit)"),
+            YTPlaylistEntry("oG0XcvGLoq0","Tiger & Woods - Balloon"),
+            YTPlaylistEntry("oG0XcvGLoq0pira","This video does not exist"),
+            YTPlaylistEntry("u7kaOntQbsw","William Onyeabor - Better Change Your Mind (Official)")
+        )
+
+        override fun update() {
+        }
+    }
+
     private val testDownloaderFactory = TestFileDownloaderFactory()
 
     private val syncher = Synchronizer(testYTPLState, DevicePlaylistState(TestUtils.testDirOnDevice),
@@ -71,6 +83,19 @@ class PLSynchronizerTest{
         ).runCommand(File("."))
 
         synchAndAssert()
+    }
+
+    @Test
+    fun testDownloadErrorHanding(){
+        val syncherThatWillFail = Synchronizer(testYTPLStateWithInvalid, DevicePlaylistState(TestUtils.testDirOnDevice),
+                                               testDownloaderFactory, TestUtils.testDirOnDevice, TestUtils.testEmptyPath)
+
+        syncherThatWillFail.synchronize()
+
+        val filesOnDevice = getFilesOnDeviceFromPath(TestUtils.testDirOnDevice)
+        assertEquals(3,filesOnDevice.size)
+        assertEquals(expectedFiles,filesOnDevice)
+        assertEquals(listOf(testYTPLStateWithInvalid.entries[2]),syncherThatWillFail.couldNotBeDownloaded)
     }
 
     fun synchAndAssert(){

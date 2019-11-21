@@ -12,6 +12,10 @@ import kotlin.streams.toList
 class Synchronizer(private val sourceState: PlaylistState, private val destState: PlaylistState,
                    private val downloaderFactory:FileDownloaderFactory, private val destOnDevice:Path, private val cache:Path){
 
+    var couldNotBeDownloaded = mutableListOf<YTPlaylistEntry>()
+    var couldNotBeTransported = mutableListOf<YTPlaylistEntry>()
+    var couldNotBeRemoved = mutableListOf<YTPlaylistEntry>()
+
     companion object {
         const val YT_DL_FILE_NAME_FORMAT = "%s-%s.m4a"
     }
@@ -38,24 +42,42 @@ class Synchronizer(private val sourceState: PlaylistState, private val destState
         toAdd.map {
             downloaderFactory.getInstance(it.ytID,cache)
         }.forEachIndexed { i,downloader ->
-            downloader.download()
-            println("$i of ${toAdd.size} files downloaded")
+            try {
+                downloader.download()
+            }catch (e:Exception){
+                couldNotBeDownloaded.add(toAdd[i])
+                println("Could not download ${toAdd[i]}. The exception was:\n$e")
+            }finally {
+                println("$i of ${toAdd.size} files downloaded")
+            }
         }
     }
 
     private fun transportCacheToDevice(toAdd:List<YTPlaylistEntry>) {
         val transporter = FileTransporterFactory.getInstance()
-        toAdd.forEachIndexed { i, entryToAdd ->
-            transporter.transport(createPathFromYTPLEntry(cache,entryToAdd),destOnDevice)
-            println("$i of ${toAdd.size} files transported")
+        toAdd.filter {
+            it !in couldNotBeDownloaded
+        }.forEachIndexed { i, entryToAdd ->
+            try {
+                transporter.transport(createPathFromYTPLEntry(cache,entryToAdd),destOnDevice)
+            }catch(e:Exception){
+                println("Could not transport ${toAdd[i]}. The exception was:\n$e")
+            }finally {
+                println("$i of ${toAdd.size} files transported")
+            }
         }
     }
 
     private fun removeEntries(toRemove:List<YTPlaylistEntry>){
         println("Starting to remove files. Entries to add are:\n$toRemove")
         toRemove.forEachIndexed { i, fileToRemove ->
-            deleteFileOnDevice(createPathFromYTPLEntry(destOnDevice,fileToRemove))
-            println("$i of ${toRemove.size} files transported")
+            try {
+                deleteFileOnDevice(createPathFromYTPLEntry(destOnDevice,fileToRemove))
+            }catch(e:Exception){
+                println("Could not remove ${toRemove[i]}. The exception was:\n$e")
+            }finally {
+                println("$i of ${toRemove.size} files transported")
+            }
         }
     }
 
