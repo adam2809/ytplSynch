@@ -79,9 +79,9 @@ class PLSynchronizerTest{
             "adb",
             "shell",
             "touch",
-            "${TestUtils.testDirOnDevice}/MappyHadness-L0raUb19qwU.m4a"
+            "${TestUtils.testDirOnDevice}/'Mappy Hadness-L0raUb19qwU.m4a'"
         ).runCommand(File("."))
-
+        
         synchAndAssert()
     }
 
@@ -96,6 +96,11 @@ class PLSynchronizerTest{
         assertEquals(3,filesOnDevice.size)
         assertEquals(expectedFiles,filesOnDevice)
         assertEquals(listOf(testYTPLStateWithInvalid.entries[2]),syncherThatWillFail.couldNotBeDownloaded)
+    }
+
+    @Test
+    fun testDoesntDownloadIfInCache(){
+
     }
 
     fun synchAndAssert(){

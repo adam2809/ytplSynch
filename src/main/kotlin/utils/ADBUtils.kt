@@ -42,6 +42,6 @@ fun deleteFileOnDevice(path:Path){
 
     val (_,error) = baseCommand.runCommand(File("."))
     if (error.isNotEmpty()){
-        throw IOException("Could not remove files from $path on device")
+        throw IOException("Could not remove files from $path on device. ADB error was:\n$error")
     }
 }

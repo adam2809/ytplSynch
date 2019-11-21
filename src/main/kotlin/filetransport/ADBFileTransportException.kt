@@ -1,6 +1,8 @@
 package filetransport
 
-class ADBFileTransportException(private val adbOutput: String) : Throwable() {
+import java.lang.Exception
+
+class ADBFileTransportException(private val adbOutput: String) : Exception() {
     var errorCode:Int = -1
     var msg = ""
 
@@ -22,8 +24,6 @@ class ADBFileTransportException(private val adbOutput: String) : Throwable() {
     }
     override fun toString(): String {
         return "A file could not have been transported (errorCode=$errorCode) the adb output was:" +
-                "$adbOutput\n" +
-                "Stack trace was:\n" +
-                "super.toString()"
+                "$adbOutput"
     }
 }

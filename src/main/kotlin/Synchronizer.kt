@@ -73,10 +73,9 @@ class Synchronizer(private val sourceState: PlaylistState, private val destState
         toRemove.forEachIndexed { i, fileToRemove ->
             try {
                 deleteFileOnDevice(createPathFromYTPLEntry(destOnDevice,fileToRemove))
+                println("$i of ${toRemove.size} files removed")
             }catch(e:Exception){
                 println("Could not remove ${toRemove[i]}. The exception was:\n$e")
-            }finally {
-                println("$i of ${toRemove.size} files transported")
             }
         }
     }
