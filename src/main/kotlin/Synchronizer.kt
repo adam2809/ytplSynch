@@ -29,6 +29,7 @@ class Synchronizer(private val sourceState: PlaylistState, private val destState
     }
 
     private fun addEntries(toAdd:List<YTPlaylistEntry>){
+        println("Starting to add files. Entries to add are:\n$toAdd")
         downloadToCache(toAdd)
         transportCacheToDevice(toAdd)
     }
@@ -36,21 +37,25 @@ class Synchronizer(private val sourceState: PlaylistState, private val destState
     private fun downloadToCache(toAdd:List<YTPlaylistEntry>){
         toAdd.map {
             downloaderFactory.getInstance(it.ytID,cache)
-        }.forEach {
-            it.download()
+        }.forEachIndexed { i,downloader ->
+            downloader.download()
+            println("$i of ${toAdd.size} files downloaded")
         }
     }
 
     private fun transportCacheToDevice(toAdd:List<YTPlaylistEntry>) {
         val transporter = FileTransporterFactory.getInstance()
-        toAdd.forEach {
-            transporter.transport(createPathFromYTPLEntry(cache,it),destOnDevice)
+        toAdd.forEachIndexed { i, entryToAdd ->
+            transporter.transport(createPathFromYTPLEntry(cache,entryToAdd),destOnDevice)
+            println("$i of ${toAdd.size} files transported")
         }
     }
 
     private fun removeEntries(toRemove:List<YTPlaylistEntry>){
-        toRemove.forEach {
-            deleteFileOnDevice(createPathFromYTPLEntry(destOnDevice,it))
+        println("Starting to remove files. Entries to add are:\n$toRemove")
+        toRemove.forEachIndexed { i, fileToRemove ->
+            deleteFileOnDevice(createPathFromYTPLEntry(destOnDevice,fileToRemove))
+            println("$i of ${toRemove.size} files transported")
         }
     }
 
