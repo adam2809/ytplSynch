@@ -30,7 +30,7 @@ class PLSynchronizerTest{
     private val testDownloaderFactory = TestFileDownloaderFactory()
 
     private val syncher = Synchronizer(testYTPLState, DevicePlaylistState(TestUtils.testDirOnDevice),
-                                       testDownloaderFactory, TestUtils.testDirOnDevice, TestUtils.testEmptyPath)
+        testDownloaderFactory, TestUtils.testDirOnDevice, TestUtils.testEmptyPath)
 
     private val expectedFiles = listOf(
         "Alexander Robotnick - Undicidisco (Justin VanDerVolgen Edit)-nsufd9Ckiko.m4a",
@@ -54,7 +54,7 @@ class PLSynchronizerTest{
         val transporter = FileTransporterFactory.getInstance()
         transporter.transport(Paths.get(TestUtils.testYTPLDownloadedPath.toString()+"/Alexander Robotnick - Undicidisco (Justin VanDerVolgen Edit)-nsufd9Ckiko.m4a"),
             TestUtils.testDirOnDevice)
-        
+
         synchAndAssert()
     }
 
