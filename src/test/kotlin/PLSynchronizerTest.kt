@@ -81,7 +81,7 @@ class PLSynchronizerTest{
             "touch",
             "${TestUtils.testDirOnDevice}/'Mappy Hadness-L0raUb19qwU.m4a'"
         ).runCommand(File("."))
-        
+
         synchAndAssert()
     }
 

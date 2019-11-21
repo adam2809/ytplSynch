@@ -72,7 +72,7 @@ class Synchronizer(private val sourceState: PlaylistState, private val destState
         println("Starting to remove files. Entries to add are:\n$toRemove")
         toRemove.forEachIndexed { i, fileToRemove ->
             try {
-                deleteFileOnDevice(createPathFromYTPLEntry(destOnDevice,fileToRemove))
+                deleteFileOnDevice(createPathFromYTPLEntry(destOnDevice,fileToRemove,true))
                 println("$i of ${toRemove.size} files removed")
             }catch(e:Exception){
                 println("Could not remove ${toRemove[i]}. The exception was:\n$e")
@@ -80,8 +80,9 @@ class Synchronizer(private val sourceState: PlaylistState, private val destState
         }
     }
 
-    private fun createPathFromYTPLEntry(base:Path,entry:YTPlaylistEntry):Path{
-        return Paths.get("$base/${YT_DL_FILE_NAME_FORMAT.format(entry.title,entry.ytID)}")
+    private fun createPathFromYTPLEntry(base:Path,entry:YTPlaylistEntry,addQuotesAroundFilename:Boolean = false):Path{
+        val quoteOrNot = if (addQuotesAroundFilename) "'" else ""
+        return Paths.get("$base/$quoteOrNot${YT_DL_FILE_NAME_FORMAT.format(entry.title,entry.ytID)}$quoteOrNot")
     }
 
     private fun clearCache(){
